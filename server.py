@@ -32,7 +32,7 @@ class MultiServer(object):
     def __init__(self):
         self.host = '167.114.69.183'
         self.port = 49153
-        self.socket = Nonex
+        self.socket = None
         self.all_connections = []
         self.all_addresses = []
 
